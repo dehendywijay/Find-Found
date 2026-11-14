@@ -1,0 +1,320 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f9fc;
+    color: #141b2d;
+}
+
+/* NAVBAR */
+
+.navbar {
+    height: 80px;
+    padding: 0 4.5%;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #4f46e5;
+    font-size: 21px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.brand i {
+    font-size: 22px;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 34px;
+}
+
+.nav-menu a {
+    color: #39445a;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-menu a.active {
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.profile i {
+    font-size: 20px;
+}
+
+/* SUCCESS CONTAINER */
+
+.success-container {
+    width: 100%;
+    max-width: 560px;
+    margin: 64px auto;
+    padding: 0 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* SUCCESS ICON */
+
+.success-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+
+    background: #ecfdf5;
+    color: #047857;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 36px;
+    margin-bottom: 34px;
+}
+
+/* TITLE */
+
+.success-container h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 32px;
+}
+
+.success-description {
+    max-width: 520px;
+    color: #40506a;
+    font-size: 16px;
+    line-height: 1.55;
+    margin-bottom: 32px;
+}
+
+/* REPORT CARD */
+
+.report-card {
+    width: 100%;
+    background: #fff;
+
+    border: 1px solid #e0e7f0;
+    border-radius: 16px;
+
+    padding: 32px;
+    text-align: left;
+
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.07);
+}
+
+.card-label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 17px;
+}
+
+.report-card h2 {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    overflow-wrap: anywhere;
+}
+
+.card-divider {
+    height: 1px;
+    background: #e0e7f0;
+    margin: 14px 0 20px;
+}
+
+.report-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.report-detail:last-child {
+    margin-bottom: 0;
+}
+
+.report-detail > span:first-child {
+    color: #40506a;
+}
+
+.report-detail strong {
+    text-align: right;
+    font-weight: 600;
+}
+
+/* STATUS */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-menunggu_verifikasi {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-aktif {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-ditolak {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.status-selesai {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* BUTTONS */
+
+.success-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.success-actions a {
+    height: 49px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: .2s;
+}
+
+.btn-primary {
+    background: #5146e5;
+    color: #fff;
+    border: 1px solid #5146e5;
+}
+
+.btn-primary:hover {
+    background: #4035c7;
+}
+
+.btn-secondary {
+    background: #fff;
+    color: #141b2d;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-secondary:hover {
+    background: #f1f5f9;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 650px) {
+
+    .navbar {
+        height: auto;
+        min-height: 70px;
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .brand {
+        font-size: 17px;
+    }
+
+    .profile {
+        font-size: 13px;
+    }
+
+    .nav-menu {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .nav-menu a {
+        font-size: 12px;
+    }
+
+    .success-container {
+        margin: 45px auto;
+    }
+
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 30px;
+    }
+
+    .success-container h1 {
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+    .success-description {
+        font-size: 14px;
+    }
+
+    .report-card {
+        padding: 23px 19px;
+    }
+
+    .report-card h2 {
+        font-size: 29px;
+    }
+
+    .report-detail {
+        font-size: 13px;
+    }
+
+    .success-actions {
+        grid-template-columns: 1fr;
+    }
+}
