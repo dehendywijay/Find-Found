@@ -1,0 +1,235 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f9fc;
+    min-height: 100vh;
+    color: #172033;
+    overflow-x: hidden;
+}
+
+.login-container {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+}
+
+/* PANEL KIRI */
+
+.welcome-panel {
+    background: #4036c9;
+    color: #ffffff;
+    padding: 48px 55px;
+}
+
+.brand {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.brand i {
+    font-size: 12px;
+}
+
+.welcome-content {
+    margin-top: 34px;
+}
+
+.welcome-content h1 {
+    font-size: 29px;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.welcome-content p {
+    margin-top: 15px;
+    font-size: 12px;
+    line-height: 1.7;
+    max-width: 420px;
+    color: #e4e2ff;
+}
+
+/* PANEL KANAN */
+
+.form-panel {
+    background: #f7f9fc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.login-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 335px;
+    padding: 27px 25px;
+    border-radius: 12px;
+    border: 1px solid #e8ebf1;
+    box-shadow: 0 3px 12px rgba(20, 30, 60, 0.07);
+}
+
+.login-card h2 {
+    font-size: 21px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.subtitle {
+    font-size: 11px;
+    color: #737d90;
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+/* FORM */
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #263247;
+}
+
+.form-group input {
+    width: 100%;
+    height: 37px;
+    padding: 0 11px;
+    border: 1px solid #dce1eb;
+    border-radius: 6px;
+    outline: none;
+    font-size: 11px;
+    color: #263247;
+    background: #ffffff;
+}
+
+.form-group input:focus {
+    border-color: #5145df;
+    box-shadow: 0 0 0 2px rgba(81, 69, 223, 0.08);
+}
+
+.form-group input::placeholder {
+    color: #a0a7b5;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 38px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #687386;
+    font-size: 12px;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-top: -5px;
+    margin-bottom: 19px;
+}
+
+.forgot-password a,
+.register-link a {
+    color: #5145df;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.forgot-password a {
+    font-size: 10px;
+}
+
+.btn-login {
+    width: 100%;
+    height: 38px;
+    border: none;
+    border-radius: 6px;
+    background: #5145df;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-login:hover {
+    background: #4036c9;
+}
+
+.register-link {
+    text-align: center;
+    font-size: 10px;
+    color: #737d90;
+    margin-top: 19px;
+}
+
+.register-link a {
+    margin-left: 3px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+    .login-container {
+        grid-template-columns: 1fr;
+        min-height: 100vh;
+    }
+
+    .welcome-panel {
+        padding: 30px 27px;
+        min-height: 180px;
+    }
+
+    .welcome-content {
+        margin-top: 25px;
+    }
+
+    .welcome-content h1 {
+        font-size: 23px;
+    }
+
+    .welcome-content p {
+        font-size: 11px;
+    }
+
+    .form-panel {
+        padding: 28px 20px;
+        min-height: 370px;
+    }
+
+    .login-card {
+        max-width: 100%;
+    }
+}
