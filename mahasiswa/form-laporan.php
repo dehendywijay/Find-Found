@@ -19,11 +19,53 @@ if (
     exit('Jenis laporan tidak valid.');
 }
 
+// ==========================================
+// VALIDASI REFERENSI LAPORAN KEHILANGAN
+// ==========================================
+
+$referensiLaporanId = null;
+
+if (
+    $jenisLaporan === 'penemuan' &&
+    isset($_GET['referensi_laporan'])
+) {
+    $referensiLaporanId = filter_var(
+        $_GET['referensi_laporan'],
+        FILTER_VALIDATE_INT
+    );
+
+    if (!$referensiLaporanId || $referensiLaporanId <= 0) {
+        exit('Referensi laporan tidak valid.');
+    }
+
+    $stmtReferensi = $pdo->prepare("
+        SELECT id, nama_barang
+        FROM reports
+        WHERE id = ?
+          AND jenis_laporan = 'kehilangan'
+          AND status = 'aktif'
+        LIMIT 1
+    ");
+
+    $stmtReferensi->execute([$referensiLaporanId]);
+
+    $laporanReferensi = $stmtReferensi->fetch(PDO::FETCH_ASSOC);
+
+    if (!$laporanReferensi) {
+        exit('Laporan kehilangan tidak ditemukan atau sudah tidak aktif.');
+    }
+}
+
+// ==========================================
+// AMBIL DATA KATEGORI DAN LOKASI
+// ==========================================
+
 $stmt = $pdo->query("
     SELECT id, nama_kategori
     FROM categories
     ORDER BY nama_kategori ASC
 ");
+
 $kategori = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $pdo->query("
@@ -32,7 +74,12 @@ $stmt = $pdo->query("
     WHERE status = 'aktif'
     ORDER BY nama_lokasi ASC
 ");
+
 $lokasi = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// ==========================================
+// TOKEN CSRF
+// ==========================================
 
 if (empty($_SESSION['csrf_laporan'])) {
     $_SESSION['csrf_laporan'] = bin2hex(random_bytes(32));
@@ -136,6 +183,13 @@ function e($value) {
                 </div>
             <?php endif; ?>
 
+            <?php if ($referensiLaporanId !== null): ?>
+                <div class="alert-message">
+                    Laporan penemuan ini terhubung dengan laporan kehilangan:
+                    <strong><?= e($laporanReferensi['nama_barang']) ?></strong>
+                </div>
+            <?php endif; ?>
+
 
             <form action="proses-laporan.php"
                   method="POST"
@@ -149,6 +203,12 @@ function e($value) {
                 <input type="hidden"
                        name="jenis_laporan"
                        value="<?= e($jenisLaporan) ?>">
+
+                <?php if ($referensiLaporanId !== null): ?>
+                    <input type="hidden"
+                           name="referensi_laporan_id"
+                           value="<?= (int)$referensiLaporanId ?>">
+                <?php endif; ?>
 
 
                 <!-- NAMA BARANG -->

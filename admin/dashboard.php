@@ -7,6 +7,7 @@ require_once __DIR__ . '/../config/database.php';
 // ==========================================
 // 1. PROTEKSI LOGIN ADMIN
 // ==========================================
+
 if (
     !isset($_SESSION['user_id']) ||
     !isset($_SESSION['role']) ||
@@ -17,7 +18,7 @@ if (
 }
 
 // ==========================================
-// 2. AMBIL DATA STATISTIK MAHASISWA
+// 2. STATISTIK MAHASISWA
 // ==========================================
 
 $jumlah_mahasiswa = $pdo->query("
@@ -41,7 +42,7 @@ $jumlah_aktif = $pdo->query("
 ")->fetchColumn();
 
 // ==========================================
-// 3. AMBIL DATA STATISTIK LAPORAN
+// 3. STATISTIK LAPORAN
 // ==========================================
 
 $jumlah_laporan = $pdo->query("
@@ -203,6 +204,8 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
             color: #777;
         }
 
+        /* MENU PENGELOLAAN */
+
         .menu {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -284,6 +287,7 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
 <div class="container">
 
     <!-- HEADER -->
+
     <div class="header">
 
         <div>
@@ -305,6 +309,7 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
 
 
     <!-- STATISTIK MAHASISWA -->
+
     <h2 class="section-title">Statistik Pengguna</h2>
 
     <div class="cards">
@@ -343,6 +348,7 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
 
 
     <!-- STATISTIK LAPORAN -->
+
     <h2 class="section-title">Statistik Laporan Barang</h2>
 
     <div class="cards">
@@ -400,31 +406,72 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
     </div>
 
 
-    <!-- MENU ADMIN -->
+    <!-- MENU PENGELOLAAN -->
+
     <h2 class="section-title">Menu Pengelolaan</h2>
 
     <div class="menu">
 
+        <!-- AKTIVASI AKUN -->
+
         <a href="aktivasi-akun.php">
             <i class="fa-solid fa-user-check"></i>
+
             <strong>Aktivasi Akun</strong>
+
             <small>
                 Kelola pendaftaran dan aktivasi akun mahasiswa.
             </small>
         </a>
 
+
+        <!-- LAPORAN MASUK -->
+
         <a href="laporan-masuk.php">
             <i class="fa-solid fa-inbox"></i>
+
             <strong>Laporan Masuk</strong>
+
             <small>
                 Periksa laporan kehilangan dan penemuan dari mahasiswa.
                 <?= (int)$laporan_pending ?> laporan menunggu verifikasi.
             </small>
         </a>
 
+
+        <!-- KLAIM BARANG -->
+
+        <a href="laporan-klaim-barang.php">
+            <i class="fa-solid fa-box-open"></i>
+
+            <strong>Laporan Klaim Barang</strong>
+
+            <small>
+                Periksa pengajuan klaim kepemilikan barang yang ditemukan.
+            </small>
+        </a>
+
+
+        <!-- KLAIM PENEMUAN -->
+
+        <a href="laporan-klaim-penemuan.php">
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+
+            <strong>Laporan Klaim Penemuan</strong>
+
+            <small>
+                Periksa laporan mahasiswa yang menemukan barang dari laporan kehilangan.
+            </small>
+        </a>
+
+
+        <!-- KELUAR -->
+
         <a href="../auth/logout.php" class="logout">
             <i class="fa-solid fa-right-from-bracket"></i>
+
             <strong>Keluar</strong>
+
             <small>
                 Keluar dari akun administrator.
             </small>
