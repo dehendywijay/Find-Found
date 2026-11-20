@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -24,6 +25,7 @@ if (!$id || $id < 1) {
 $stmt = $pdo->prepare("
     SELECT
         r.id,
+        r.user_id,
         r.kode_laporan,
         r.jenis_laporan,
         r.nama_barang,
@@ -103,6 +105,13 @@ function tanggalIndonesia($tanggal)
 }
 
 $isKehilangan = $barang['jenis_laporan'] === 'kehilangan';
+
+// Tombol klaim hanya untuk laporan kehilangan
+// dan tidak ditampilkan kepada pemilik laporan
+$bolehKlaim = (
+    $isKehilangan &&
+    (int)$barang['user_id'] !== (int)$_SESSION['user_id']
+);
 
 ?>
 
@@ -325,6 +334,40 @@ $isKehilangan = $barang['jenis_laporan'] === 'kehilangan';
             overflow-wrap: anywhere;
         }
 
+        /* TOMBOL KLAIM */
+        .claim-box {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .claim-box p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0 0 14px;
+        }
+
+        .btn-claim {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            width: 100%;
+            padding: 13px 18px;
+            border-radius: 8px;
+            background: #6246d9;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-claim:hover {
+            background: #5035c0;
+        }
+
         @media (max-width: 750px) {
             .page-wrapper {
                 padding: 22px 16px 40px;
@@ -351,15 +394,6 @@ $isKehilangan = $barang['jenis_laporan'] === 'kehilangan';
             .photo-section {
                 min-width: 0;
                 height: fit-content;
-            }
-
-            .main-photo {
-                display: block;
-                width: 100%;
-                height: auto;
-                max-width: 100%;
-                object-fit: contain;
-                border-radius: 9px;
             }
         }
     </style>
@@ -502,6 +536,29 @@ $isKehilangan = $barang['jenis_laporan'] === 'kehilangan';
                 <div class="report-code">
                     Kode laporan: <?= e($barang['kode_laporan']) ?>
                 </div>
+
+                <!-- TOMBOL KLAIM PENEMUAN -->
+                <?php if ($bolehKlaim): ?>
+
+                    <div class="claim-box">
+
+                        <p>
+                            Menemukan barang yang dilaporkan hilang ini?
+                            Kirim foto dan detail barang sebagai bukti
+                            untuk diperiksa oleh admin.
+                        </p>
+
+                        <a
+                            href="form-klaim.php?id=<?= (int)$barang['id'] ?>"
+                            class="btn-claim"
+                        >
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                            Saya Menemukan Barang Ini
+                        </a>
+
+                    </div>
+
+                <?php endif; ?>
 
             </section>
 

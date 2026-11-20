@@ -4,7 +4,7 @@ session_start();
 
 require_once __DIR__ . '/../config/database.php';
 
-// 1. Proteksi login
+// Proteksi login
 if (
     !isset($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'mahasiswa'
@@ -15,12 +15,23 @@ if (
 
 $userId = $_SESSION['user_id'];
 
-// 2. Ambil parameter pencarian dan filter
+// Token keamanan
+if (empty($_SESSION['csrf_selesai_laporan'])) {
+    $_SESSION['csrf_selesai_laporan'] = bin2hex(random_bytes(32));
+}
+
+$csrfToken = $_SESSION['csrf_selesai_laporan'];
+
+// Notifikasi
+$flash = $_SESSION['flash_selesai_laporan'] ?? null;
+unset($_SESSION['flash_selesai_laporan']);
+
+// Parameter pencarian dan filter
 $keyword = trim($_GET['keyword'] ?? '');
 $filterStatus = $_GET['status'] ?? '';
 $filterJenis = $_GET['jenis'] ?? '';
 
-// 3. Query utama laporan mahasiswa
+// Query laporan mahasiswa
 $sql = "
     SELECT
         r.id,
@@ -33,13 +44,41 @@ $sql = "
         r.created_at,
         c.nama_kategori,
         l.nama_lokasi,
+
         (
             SELECT ri.nama_file
             FROM report_images ri
             WHERE ri.report_id = r.id
             ORDER BY ri.urutan ASC
             LIMIT 1
-        ) AS foto
+        ) AS foto,
+
+        (
+            SELECT fc.id
+            FROM finding_claims fc
+            WHERE fc.report_id = r.id
+              AND fc.status IN ('disetujui', 'selesai')
+            ORDER BY fc.updated_at DESC
+            LIMIT 1
+        ) AS finding_claim_id,
+
+        (
+            SELECT fc.status
+            FROM finding_claims fc
+            WHERE fc.report_id = r.id
+              AND fc.status IN ('disetujui', 'selesai')
+            ORDER BY fc.updated_at DESC
+            LIMIT 1
+        ) AS status_klaim_penemuan,
+
+        (
+            SELECT fc.catatan_admin
+            FROM finding_claims fc
+            WHERE fc.report_id = r.id
+              AND fc.status IN ('disetujui', 'selesai')
+            ORDER BY fc.updated_at DESC
+            LIMIT 1
+        ) AS pesan_admin_penemuan
 
     FROM reports r
 
@@ -52,14 +91,12 @@ $sql = "
     WHERE r.user_id = :user_id
 ";
 
-// Parameter awal
 $params = [
     ':user_id' => $userId
 ];
 
-// 4. Pencarian nama barang dan kode laporan
+// Pencarian
 if ($keyword !== '') {
-
     $sql .= "
         AND (
             r.nama_barang LIKE :nama_keyword
@@ -71,7 +108,7 @@ if ($keyword !== '') {
     $params[':kode_keyword'] = '%' . $keyword . '%';
 }
 
-// 5. Filter status
+// Filter status
 $statusValid = [
     'menunggu_verifikasi',
     'aktif',
@@ -80,31 +117,33 @@ $statusValid = [
 ];
 
 if (in_array($filterStatus, $statusValid, true)) {
-
     $sql .= " AND r.status = :status";
-
     $params[':status'] = $filterStatus;
 }
 
-// 6. Filter jenis laporan
+// Filter jenis
 if (in_array($filterJenis, ['kehilangan', 'penemuan'], true)) {
-
     $sql .= " AND r.jenis_laporan = :jenis";
-
     $params[':jenis'] = $filterJenis;
 }
 
-// 7. Urutkan laporan terbaru
 $sql .= " ORDER BY r.created_at DESC";
 
-// 8. Eksekusi query
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
 $laporan = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 9. Fungsi label status
-function labelStatus($status) {
+// Label status
+function labelStatus($status, $statusKlaim = null)
+{
+    if ($status === 'selesai') {
+        return 'Selesai';
+    }
+
+    if (in_array($statusKlaim, ['disetujui', 'selesai'], true)) {
+        return 'Barang Ditemukan';
+    }
 
     $labels = [
         'menunggu_verifikasi' => 'Menunggu verifikasi',
@@ -116,8 +155,16 @@ function labelStatus($status) {
     return $labels[$status] ?? ucfirst($status);
 }
 
-// 10. Fungsi warna status
-function warnaStatus($status) {
+// Warna status
+function warnaStatus($status, $statusKlaim = null)
+{
+    if ($status === 'selesai') {
+        return 'secondary';
+    }
+
+    if (in_array($statusKlaim, ['disetujui', 'selesai'], true)) {
+        return 'found';
+    }
 
     $warna = [
         'menunggu_verifikasi' => 'warning',
@@ -134,7 +181,6 @@ function warnaStatus($status) {
 <html lang="id">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -145,6 +191,58 @@ function warnaStatus($status) {
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+    <style>
+        .status.found {
+            background: #fff0d6;
+            color: #c77700;
+        }
+
+        .confirm-finish {
+            margin-top: 12px;
+        }
+
+        .finish-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 15px;
+            border: none;
+            border-radius: 7px;
+            background: #16a34a;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .finish-button:hover {
+            background: #15803d;
+        }
+
+        .finish-info {
+            margin-top: 9px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .flash-message {
+            margin-bottom: 20px;
+            padding: 13px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .flash-message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .flash-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
 </head>
 
 <body>
@@ -159,14 +257,11 @@ function warnaStatus($status) {
     <nav>
         <a href="dashboard.php">Beranda</a>
         <a href="cari-barang.php">Cari barang</a>
-        <a href="status-laporan.php" class="active">
-            Status laporan
-        </a>
+        <a href="status.php" class="active">Status</a>
     </nav>
 
     <div class="profile">
         <i class="fa-regular fa-user"></i>
-
         <?= htmlspecialchars($_SESSION['nama'] ?? 'Mahasiswa') ?>
     </div>
 
@@ -175,14 +270,18 @@ function warnaStatus($status) {
 <main class="container">
 
     <section class="page-heading">
-
         <h1>Status laporan</h1>
 
         <p>
             Pantau perkembangan laporan kehilangan dan penemuan barangmu.
         </p>
-
     </section>
+
+    <?php if ($flash): ?>
+        <div class="flash-message <?= htmlspecialchars($flash['type']) ?>">
+            <?= htmlspecialchars($flash['message']) ?>
+        </div>
+    <?php endif; ?>
 
     <!-- FILTER DAN PENCARIAN -->
     <section class="filter-card">
@@ -190,7 +289,6 @@ function warnaStatus($status) {
         <form method="GET" action="status-laporan.php">
 
             <div class="search-box">
-
                 <i class="fa-solid fa-search"></i>
 
                 <input
@@ -199,11 +297,9 @@ function warnaStatus($status) {
                     placeholder="Cari nama barang atau kode laporan..."
                     value="<?= htmlspecialchars($keyword) ?>"
                 >
-
             </div>
 
             <select name="jenis">
-
                 <option value="">Semua jenis laporan</option>
 
                 <option value="kehilangan"
@@ -215,11 +311,9 @@ function warnaStatus($status) {
                     <?= $filterJenis === 'penemuan' ? 'selected' : '' ?>>
                     Penemuan
                 </option>
-
             </select>
 
             <select name="status">
-
                 <option value="">Semua status</option>
 
                 <option value="menunggu_verifikasi"
@@ -241,12 +335,9 @@ function warnaStatus($status) {
                     <?= $filterStatus === 'selesai' ? 'selected' : '' ?>>
                     Selesai
                 </option>
-
             </select>
 
-            <button type="submit">
-                Cari
-            </button>
+            <button type="submit">Cari</button>
 
             <a href="status-laporan.php" class="reset-button">
                 Reset
@@ -260,13 +351,11 @@ function warnaStatus($status) {
     <section class="report-section">
 
         <div class="section-heading">
-
             <h2>Riwayat laporan saya</h2>
 
             <span>
                 <?= count($laporan) ?> laporan ditemukan
             </span>
-
         </div>
 
         <?php if (count($laporan) > 0): ?>
@@ -299,15 +388,17 @@ function warnaStatus($status) {
                             <div class="report-top">
 
                                 <span class="report-type">
-
                                     Laporan <?= htmlspecialchars(ucfirst($item['jenis_laporan'])) ?>
-
                                 </span>
 
-                                <span class="status <?= warnaStatus($item['status']) ?>">
-
-                                    <?= htmlspecialchars(labelStatus($item['status'])) ?>
-
+                                <span class="status <?= warnaStatus(
+                                    $item['status'],
+                                    $item['status_klaim_penemuan']
+                                ) ?>">
+                                    <?= htmlspecialchars(labelStatus(
+                                        $item['status'],
+                                        $item['status_klaim_penemuan']
+                                    )) ?>
                                 </span>
 
                             </div>
@@ -324,34 +415,95 @@ function warnaStatus($status) {
 
                                 <span>
                                     <i class="fa-solid fa-layer-group"></i>
-
                                     <?= htmlspecialchars($item['nama_kategori']) ?>
                                 </span>
 
                                 <span>
                                     <i class="fa-solid fa-location-dot"></i>
-
                                     <?= htmlspecialchars($item['nama_lokasi']) ?>
                                 </span>
 
                                 <span>
                                     <i class="fa-regular fa-calendar"></i>
-
                                     <?= date('d M Y', strtotime($item['tanggal_kejadian'])) ?>
                                 </span>
 
                             </div>
 
+                            <!-- CATATAN ADMIN LAPORAN -->
                             <?php if (
                                 $item['status'] === 'ditolak' &&
                                 !empty($item['catatan_admin'])
                             ): ?>
 
                                 <div class="admin-note">
-
                                     <strong>Catatan admin:</strong>
-
                                     <?= nl2br(htmlspecialchars($item['catatan_admin'])) ?>
+                                </div>
+
+                            <?php endif; ?>
+
+                            <!-- PESAN ADMIN KLAIM PENEMUAN -->
+                            <?php if (
+                                !empty($item['pesan_admin_penemuan']) &&
+                                in_array(
+                                    $item['status_klaim_penemuan'],
+                                    ['disetujui', 'selesai'],
+                                    true
+                                )
+                            ): ?>
+
+                                <div class="admin-note">
+                                    <strong>Pesan admin:</strong>
+                                    <?= nl2br(htmlspecialchars($item['pesan_admin_penemuan'])) ?>
+                                </div>
+
+                            <?php endif; ?>
+
+                            <!-- TOMBOL KONFIRMASI SELESAI -->
+                            <?php if (
+                                $item['jenis_laporan'] === 'kehilangan' &&
+                                $item['status'] !== 'selesai' &&
+                                $item['status_klaim_penemuan'] === 'disetujui' &&
+                                !empty($item['finding_claim_id'])
+                            ): ?>
+
+                                <div class="confirm-finish">
+
+                                    <form
+                                        method="POST"
+                                        action="proses-selesai-penemuan.php"
+                                        onsubmit="return confirm('Apakah barang sudah kamu terima kembali dari penemu? Jika ya, laporan akan ditandai selesai.');"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="<?= htmlspecialchars($csrfToken) ?>"
+                                        >
+
+                                        <input
+                                            type="hidden"
+                                            name="report_id"
+                                            value="<?= (int)$item['id'] ?>"
+                                        >
+
+                                        <input
+                                            type="hidden"
+                                            name="finding_claim_id"
+                                            value="<?= (int)$item['finding_claim_id'] ?>"
+                                        >
+
+                                        <button type="submit" class="finish-button">
+                                            <i class="fa-solid fa-check-circle"></i>
+                                            Selesai
+                                        </button>
+
+                                    </form>
+
+                                    <p class="finish-info">
+                                        Klik setelah barang benar-benar kamu terima kembali.
+                                    </p>
 
                                 </div>
 
@@ -368,7 +520,6 @@ function warnaStatus($status) {
         <?php else: ?>
 
             <div class="empty-state">
-
                 <i class="fa-regular fa-folder-open"></i>
 
                 <h3>Belum ada laporan</h3>
@@ -380,7 +531,6 @@ function warnaStatus($status) {
                 <a href="lapor-kehilangan.php">
                     Buat laporan sekarang
                 </a>
-
             </div>
 
         <?php endif; ?>

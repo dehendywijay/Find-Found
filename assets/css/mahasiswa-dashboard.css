@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -29,6 +30,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 25px;
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
 }
@@ -40,6 +42,7 @@ a {
     color: #4f46e5;
     font-size: 18px;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 .brand i {
@@ -55,7 +58,8 @@ a {
 .nav-menu a {
     color: #475569;
     font-size: 14px;
-    transition: .2s;
+    transition: 0.2s;
+    white-space: nowrap;
 }
 
 .nav-menu a:hover,
@@ -67,17 +71,149 @@ a {
     font-weight: 600;
 }
 
-.profile {
-    display: flex;
+/* =================================
+   TOMBOL STATUS
+================================= */
+
+.status-dropdown {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    color: #0f172a;
-    font-size: 14px;
-    font-weight: 600;
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
-.profile i {
-    font-size: 18px;
+.status-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 30px;
+    background: #ffffff;
+    color: #334155;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.status-button:hover,
+.status-dropdown.active .status-button {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+    color: #4f46e5;
+}
+
+.status-button .status-arrow {
+    font-size: 11px;
+    transition: transform 0.2s ease;
+}
+
+.status-dropdown.active .status-arrow {
+    transform: rotate(180deg);
+}
+
+/* =================================
+   PANEL STATUS
+================================= */
+
+.status-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 340px;
+    padding: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    z-index: 9999;
+}
+
+.status-dropdown.active .status-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* =================================
+   KARTU STATUS
+================================= */
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #334155;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.status-card:hover {
+    background: #f5f6ff;
+    border-color: #e0e7ff;
+    color: #4f46e5;
+}
+
+.status-card > i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 16px;
+}
+
+.status-card div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.status-card strong {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.status-card small {
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* =================================
+   PROFIL PENGGUNA
+================================= */
+
+.navbar-profile {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-shrink: 0;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.navbar-profile i {
+    font-size: 17px;
+    color: #64748b;
 }
 
 /* =================================
@@ -175,7 +311,7 @@ a {
     background: #ffffff;
     color: #475569;
     font-size: 13px;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .category-list a:hover {
@@ -197,7 +333,7 @@ a {
     font-size: 14px;
     font-weight: 600;
     color: #0f172a;
-    transition: .2s;
+    transition: 0.2s;
 }
 
 .report-buttons a:hover {
@@ -341,7 +477,6 @@ a {
     color: #059669;
 }
 
-/* Tambahan untuk status 'Proses klaim' di gambar */
 .status-claim {
     background: #fef3c7;
     color: #d97706;
@@ -395,13 +530,17 @@ a {
 }
 
 /* =================================
-   RESPONSIVE
+   RESPONSIVE TABLET
     }
 
     .report-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+/* =================================
+   RESPONSIVE HP
+================================= */
 
 @media (max-width: 650px) {
     .navbar {
@@ -412,27 +551,36 @@ a {
         gap: 15px;
     }
 
+    .brand {
+        font-size: 16px;
+    }
+
     .nav-menu {
         order: 3;
         width: 100%;
-        justify-content: space-between;
-        gap: 10px;
+        justify-content: flex-start;
+        gap: 20px;
     }
 
     .nav-menu a {
         font-size: 12px;
     }
 
-    .brand {
-        font-size: 16px;
+    .status-dropdown {
+        margin-left: auto;
     }
 
-    .profile {
+    .status-button {
+        padding: 9px 12px;
         font-size: 12px;
     }
 
-    .profile span {
-        display: none;
+    .status-panel {
+        width: min(340px, calc(100vw - 40px));
+    }
+
+    .navbar-profile {
+        font-size: 12px;
     }
 
     .main-content {

@@ -4,7 +4,8 @@ session_start();
 
 require_once __DIR__ . '/../config/database.php';
 
-function kembali($pesan) {
+function kembali($pesan)
+{
     $_SESSION['flash_laporan'] = $pesan;
 
     $jenis = $_POST['jenis_laporan'] ?? '';
@@ -13,11 +14,28 @@ function kembali($pesan) {
         ? 'lapor-penemuan.php'
         : 'lapor-kehilangan.php';
 
+    // Pertahankan referensi laporan jika valid
+    $referensi = filter_var(
+        $_POST['referensi_laporan_id'] ?? null,
+        FILTER_VALIDATE_INT
+    );
+
+    if (
+        $jenis === 'penemuan' &&
+        $referensi &&
+        $referensi > 0
+    ) {
+        $halaman .= '?referensi_laporan=' . $referensi;
+    }
+
     header("Location: $halaman");
     exit;
 }
 
-// 1. Proteksi login
+// ==========================================
+// 1. PROTEKSI LOGIN
+// ==========================================
+
 if (
     !isset($_SESSION['user_id']) ||
     ($_SESSION['role'] ?? '') !== 'mahasiswa'
@@ -31,7 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 2. Validasi CSRF
+// ==========================================
+// 2. VALIDASI CSRF
+// ==========================================
+
 if (
     !isset($_POST['csrf_token'], $_SESSION['csrf_laporan']) ||
     !hash_equals($_SESSION['csrf_laporan'], $_POST['csrf_token'])
@@ -39,13 +60,20 @@ if (
     exit('Permintaan tidak valid. Silakan muat ulang formulir.');
 }
 
+// ==========================================
+// 3. VALIDASI JENIS LAPORAN
+// ==========================================
+
 $jenis = $_POST['jenis_laporan'] ?? '';
 
 if (!in_array($jenis, ['kehilangan', 'penemuan'], true)) {
     exit('Jenis laporan tidak valid.');
 }
 
-// 3. Ambil input
+// ==========================================
+// 4. AMBIL INPUT
+// ==========================================
+
 $namaBarang = trim($_POST['nama_barang'] ?? '');
 $detailLokasi = trim($_POST['detail_lokasi'] ?? '');
 
@@ -68,6 +96,53 @@ $deskripsi = trim($_POST['deskripsi'] ?? '');
 $detailRahasia = trim($_POST['detail_rahasia'] ?? '');
 $kontak = trim($_POST['kontak'] ?? '');
 
+// ==========================================
+// 5. AMBIL REFERENSI LAPORAN KEHILANGAN
+// ==========================================
+
+$referensiLaporanId = null;
+
+if ($jenis === 'penemuan') {
+
+    $referensiInput = $_POST['referensi_laporan_id'] ?? '';
+
+    // Jika referensi dikirim, validasi ID-nya
+    if ($referensiInput !== '') {
+
+        $referensiLaporanId = filter_var(
+            $referensiInput,
+            FILTER_VALIDATE_INT
+        );
+
+        if (
+            !$referensiLaporanId ||
+            $referensiLaporanId <= 0
+        ) {
+            kembali('Referensi laporan tidak valid.');
+        }
+
+        // Pastikan laporan asal benar-benar laporan kehilangan aktif
+        $stmtReferensi = $pdo->prepare("
+            SELECT id
+            FROM reports
+            WHERE id = ?
+              AND jenis_laporan = 'kehilangan'
+              AND status = 'aktif'
+            LIMIT 1
+        ");
+
+        $stmtReferensi->execute([$referensiLaporanId]);
+
+        if (!$stmtReferensi->fetch(PDO::FETCH_ASSOC)) {
+            kembali('Laporan kehilangan yang dirujuk tidak ditemukan atau sudah tidak aktif.');
+        }
+    }
+}
+
+// ==========================================
+// 6. VALIDASI DATA WAJIB
+// ==========================================
+
 if (
     $namaBarang === '' ||
     mb_strlen($namaBarang) > 150 ||
@@ -79,7 +154,10 @@ if (
     kembali('Mohon lengkapi seluruh data wajib dengan benar.');
 }
 
-// 4. Validasi tanggal
+// ==========================================
+// 7. VALIDASI TANGGAL
+// ==========================================
+
 $date = DateTime::createFromFormat('!Y-m-d', $tanggal);
 
 if (
@@ -98,9 +176,14 @@ if (
     kembali('Ada data yang melebihi batas karakter.');
 }
 
-// 5. Pastikan kategori dan lokasi tersedia
+// ==========================================
+// 8. VALIDASI KATEGORI DAN LOKASI
+// ==========================================
+
 $stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM categories WHERE id = ?
+    SELECT COUNT(*)
+    FROM categories
+    WHERE id = ?
 ");
 
 $stmt->execute([$categoryId]);
@@ -110,8 +193,10 @@ if ((int)$stmt->fetchColumn() === 0) {
 }
 
 $stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM locations
-    WHERE id = ? AND status = 'aktif'
+    SELECT COUNT(*)
+    FROM locations
+    WHERE id = ?
+      AND status = 'aktif'
 ");
 
 $stmt->execute([$locationId]);
@@ -120,18 +205,25 @@ if ((int)$stmt->fetchColumn() === 0) {
     kembali('Lokasi tidak tersedia.');
 }
 
-// 6. Validasi nomor kontak sederhana
+// ==========================================
+// 9. VALIDASI NOMOR KONTAK
+// ==========================================
+
 if (
     $kontak !== '' &&
-    !preg_match('/^[0-9+()\-\s]{8,30}$/', $kontak)
+    !preg_match('/^[0-9+()\-\\s]{8,30}$/', $kontak)
 ) {
     kembali('Format nomor kontak tidak valid.');
 }
 
-// 7. Validasi upload foto
+// ==========================================
+// 10. VALIDASI UPLOAD FOTO
+// ==========================================
+
 $files = [];
 
 if (isset($_FILES['foto'])) {
+
     $upload = $_FILES['foto'];
 
     if (!is_array($upload['name'])) {
@@ -183,7 +275,10 @@ if (isset($_FILES['foto'])) {
     }
 }
 
-// 8. Siapkan folder upload
+// ==========================================
+// 11. SIAPKAN FOLDER UPLOAD
+// ==========================================
+
 $folder = __DIR__ . '/../uploads/laporan';
 
 if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
@@ -196,15 +291,22 @@ try {
 
     $pdo->beginTransaction();
 
-    // 9. Buat kode laporan unik
+    // ======================================
+    // 12. BUAT KODE LAPORAN
+    // ======================================
+
     $kode = 'FF-' . date('Ymd') . '-' .
         strtoupper(bin2hex(random_bytes(4)));
 
-    // 10. Simpan laporan ke database
+    // ======================================
+    // 13. SIMPAN LAPORAN KE DATABASE
+    // ======================================
+
     $stmt = $pdo->prepare("
         INSERT INTO reports (
             kode_laporan,
             user_id,
+            referensi_laporan_id,
             category_id,
             location_id,
             detail_lokasi,
@@ -216,13 +318,14 @@ try {
             kontak,
             status
         ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'menunggu_verifikasi'
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'menunggu_verifikasi'
         )
     ");
 
     $stmt->execute([
         $kode,
         $_SESSION['user_id'],
+        $referensiLaporanId,
         $categoryId,
         $locationId,
         $detailLokasi !== '' ? $detailLokasi : null,
@@ -236,7 +339,10 @@ try {
 
     $reportId = $pdo->lastInsertId();
 
-    // 11. Simpan foto ke report_images
+    // ======================================
+    // 14. SIMPAN FOTO
+    // ======================================
+
     $stmtFoto = $pdo->prepare("
         INSERT INTO report_images
             (report_id, nama_file, urutan)
@@ -263,27 +369,29 @@ try {
         ]);
     }
 
-    // 12. Konfirmasi transaksi database
+    // ======================================
+    // 15. SELESAIKAN TRANSAKSI
+    // ======================================
+
     $pdo->commit();
 
-    // 13. Buat token CSRF baru
     $_SESSION['csrf_laporan'] = bin2hex(random_bytes(32));
 
-    // 14. Simpan ID laporan untuk halaman sukses
     $_SESSION['laporan_berhasil_id'] = (int)$reportId;
 
-    // 15. Arahkan ke halaman laporan berhasil
-    header('Location: laporan-berhasil.php');
+    // Arahkan berdasarkan jenis laporan
+    if ($jenis === 'penemuan') {
+        header('Location: penemuan-berhasil.php');
+    } else {
+        header('Location: laporan-berhasil.php');
+    }
     exit;
-
 } catch (Throwable $e) {
 
-    // Batalkan transaksi jika masih berjalan
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
 
-    // Hapus foto jika penyimpanan database gagal
     foreach ($movedFiles as $file) {
         if (is_file($file)) {
             unlink($file);
