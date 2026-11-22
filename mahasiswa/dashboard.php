@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -103,16 +104,31 @@ function tanggalIndonesia($tanggal)
     <title>Beranda - FIND & FOUND</title>
 
     <link rel="stylesheet" href="../assets/css/mahasiswa-dashboard.css">
+
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .logout-button {
+            margin-left: 12px;
+            color: #e05252;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.2s ease;
+        }
+
+        .logout-button:hover {
+            color: #bd2525;
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="page-wrapper">
 
-
         <header class="navbar">
+
             <a href="dashboard.php" class="brand">
                 <i class="fa-solid fa-location-dot"></i>
                 <span>FIND & FOUND</span>
@@ -125,11 +141,25 @@ function tanggalIndonesia($tanggal)
             </nav>
 
             <div class="navbar-profile">
+
                 <i class="fa-regular fa-user"></i>
+
                 <span><?= e($nama_mahasiswa) ?></span>
+
+                <a
+                    href="../auth/logout.php"
+                    class="logout-button"
+                    onclick="return confirm('Apakah kamu yakin ingin keluar?');"
+                    title="Logout">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                </a>
+
             </div>
+
         </header>
-        
+
         <main class="main-content">
 
             <!-- BAGIAN HERO -->
@@ -148,26 +178,36 @@ function tanggalIndonesia($tanggal)
                     </p>
 
                     <form action="cari-barang.php" method="GET" class="search-form">
+
                         <div class="search-input">
+
                             <i class="fa-solid fa-magnifying-glass"></i>
+
                             <input
                                 type="text"
                                 name="q"
                                 placeholder="Cari dompet, kunci, laptop...">
+
                         </div>
 
                         <button type="submit">Cari</button>
+
                     </form>
 
                     <div class="category-list">
+
                         <?php foreach ($kategori as $item): ?>
+
                             <a href="cari-barang.php?kategori=<?= (int) $item['id'] ?>">
                                 <?= e($item['nama_kategori']) ?>
                             </a>
+
                         <?php endforeach; ?>
+
                     </div>
 
                     <div class="report-buttons">
+
                         <a href="lapor-kehilangan.php">
                             Lapor kehilangan
                         </a>
@@ -175,6 +215,7 @@ function tanggalIndonesia($tanggal)
                         <a href="lapor-penemuan.php">
                             Lapor penemuan
                         </a>
+
                     </div>
 
                 </div>
@@ -185,7 +226,6 @@ function tanggalIndonesia($tanggal)
 
             </section>
 
-
             <!-- CARA KERJA -->
             <section class="how-section">
 
@@ -194,6 +234,7 @@ function tanggalIndonesia($tanggal)
                 <div class="how-grid">
 
                     <div class="how-card">
+
                         <div class="step-number">1</div>
 
                         <h3>Lapor atau cari barang</h3>
@@ -201,9 +242,11 @@ function tanggalIndonesia($tanggal)
                         <p>
                             Isi formulir singkat atau cari lewat kata kunci dan filter.
                         </p>
+
                     </div>
 
                     <div class="how-card">
+
                         <div class="step-number">2</div>
 
                         <h3>Ajukan klaim</h3>
@@ -211,9 +254,11 @@ function tanggalIndonesia($tanggal)
                         <p>
                             Jawab pertanyaan verifikasi dan unggah bukti kepemilikan.
                         </p>
+
                     </div>
 
                     <div class="how-card">
+
                         <div class="step-number">3</div>
 
                         <h3>Ambil barang</h3>
@@ -221,6 +266,7 @@ function tanggalIndonesia($tanggal)
                         <p>
                             Setelah disetujui admin, ambil barang sesuai jadwal yang kamu pilih.
                         </p>
+
                     </div>
 
                 </div>
@@ -231,9 +277,11 @@ function tanggalIndonesia($tanggal)
             <section class="latest-section">
 
                 <div class="section-heading">
+
                     <h2>Laporan terbaru</h2>
 
                     <a href="cari-barang.php">Lihat semua</a>
+
                 </div>
 
                 <div class="report-grid">
@@ -278,8 +326,13 @@ function tanggalIndonesia($tanggal)
                                     <h3><?= e($item['nama_barang']) ?></h3>
 
                                     <div class="report-location">
+
                                         <i class="fa-solid fa-location-dot"></i>
-                                        <span><?= e($item['nama_lokasi'] ?? 'Lokasi belum tersedia') ?></span>
+
+                                        <span>
+                                            <?= e($item['nama_lokasi'] ?? 'Lokasi belum tersedia') ?>
+                                        </span>
+
                                     </div>
 
                                     <div class="report-date">
@@ -295,8 +348,11 @@ function tanggalIndonesia($tanggal)
                     <?php else: ?>
 
                         <div class="empty-report">
+
                             <i class="fa-regular fa-folder-open"></i>
+
                             <p>Belum ada laporan barang terbaru.</p>
+
                         </div>
 
                     <?php endif; ?>
@@ -308,8 +364,6 @@ function tanggalIndonesia($tanggal)
         </main>
 
     </div>
-
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
