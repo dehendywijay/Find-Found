@@ -27,18 +27,18 @@ $jumlah_mahasiswa = $pdo->query("
     WHERE role = 'mahasiswa'
 ")->fetchColumn();
 
-$jumlah_pending = $pdo->query("
-    SELECT COUNT(*)
-    FROM users
-    WHERE role = 'mahasiswa'
-    AND status_akun = 'pending'
-")->fetchColumn();
-
 $jumlah_aktif = $pdo->query("
     SELECT COUNT(*)
     FROM users
     WHERE role = 'mahasiswa'
     AND status_akun = 'aktif'
+")->fetchColumn();
+
+$jumlah_nonaktif = $pdo->query("
+    SELECT COUNT(*)
+    FROM users
+    WHERE role = 'mahasiswa'
+    AND status_akun = 'nonaktif'
 ")->fetchColumn();
 
 // ==========================================
@@ -324,16 +324,6 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
             <strong><?= (int)$jumlah_mahasiswa ?></strong>
         </div>
 
-        <div class="card warning">
-            <div class="card-top">
-                <p>Menunggu Aktivasi</p>
-                <div class="icon">
-                    <i class="fa-solid fa-user-clock"></i>
-                </div>
-            </div>
-            <strong><?= (int)$jumlah_pending ?></strong>
-        </div>
-
         <div class="card success">
             <div class="card-top">
                 <p>Akun Aktif</p>
@@ -342,6 +332,16 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
                 </div>
             </div>
             <strong><?= (int)$jumlah_aktif ?></strong>
+        </div>
+
+        <div class="card danger">
+            <div class="card-top">
+                <p>Akun Nonaktif</p>
+                <div class="icon">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+            </div>
+            <strong><?= (int)$jumlah_nonaktif ?></strong>
         </div>
 
     </div>
@@ -412,15 +412,15 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
 
     <div class="menu">
 
-        <!-- AKTIVASI AKUN -->
+        <!-- KELOLA AKUN MAHASISWA -->
 
         <a href="aktivasi-akun.php">
-            <i class="fa-solid fa-user-check"></i>
+            <i class="fa-solid fa-users-gear"></i>
 
-            <strong>Aktivasi Akun</strong>
+            <strong>Kelola Akun Mahasiswa</strong>
 
             <small>
-                Kelola pendaftaran dan aktivasi akun mahasiswa.
+                Lihat daftar akun mahasiswa serta ubah status akun jika diperlukan.
             </small>
         </a>
 

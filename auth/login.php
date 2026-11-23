@@ -59,9 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$user || !password_verify($password, $user['password'])) {
                 $error = 'Email atau kata sandi salah.';
 
-            } elseif ($user['status_akun'] === 'pending') {
-                $error = 'Akun kamu belum diaktifkan oleh admin.';
-
+            // Memeriksa status akun
             } elseif ($user['status_akun'] !== 'aktif') {
                 $error = 'Akun kamu sedang tidak aktif. Hubungi admin.';
 
@@ -74,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
 
-                // Membuat token login baru
+                // Menghapus token login lama
                 unset($_SESSION['csrf_login']);
 
                 // Mengarahkan pengguna berdasarkan role

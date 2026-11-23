@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         :email,
                         :password,
                         'mahasiswa',
-                        'pending'
+                        'aktif'
                     )
                 ");
 
@@ -221,13 +221,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="register-alert register-success">
                     <i class="fa-solid fa-circle-check"></i>
-                    Akun berhasil dibuat.
+                    Akun berhasil dibuat dan sudah aktif.
                 </div>
 
                 <p>
-                    Akun kamu saat ini sedang menunggu aktivasi
-                    admin. Kamu belum bisa masuk sebelum akun
-                    diaktifkan.
+                    Pendaftaran akun kamu berhasil.
+                    Sekarang kamu sudah bisa masuk menggunakan
+                    email kampus dan kata sandi yang telah didaftarkan.
                 </p>
 
                 <a href="login.php" style="
@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     font-size:12px;
                     font-weight:600;
                 ">
-                    Kembali ke halaman masuk
+                    Masuk ke akun
                 </a>
 
             <?php else: ?>
