@@ -134,7 +134,7 @@ function warnaStatusKlaim($status)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Status Klaim Penemuan - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="../assets/css/status-laporan.css">
 
     <link rel="stylesheet"

@@ -19,7 +19,7 @@ if (
 // 2. AMBIL FILTER PENCARIAN
 // ==========================================
 $keyword = trim($_GET['keyword'] ?? '');
-$filterStatus = $_GET['status'] ?? 'menunggu_verifikasi';
+$filterStatus = $_GET['status'] ?? '';
 $filterJenis = $_GET['jenis'] ?? '';
 
 // Status yang diperbolehkan
@@ -172,8 +172,8 @@ function e($value)
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Laporan Masuk - FIND & FOUND</title>
-
+    <title>Pemantauan Laporan - FIND & FOUND</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -503,19 +503,17 @@ function e($value)
 
     </div>
 
-
     <!-- HEADING -->
     <section class="heading">
 
-        <h1>Laporan Masuk</h1>
+        <h1>Pemantauan Laporan</h1>
 
         <p>
-            Kelola dan verifikasi laporan kehilangan maupun
-            penemuan barang dari mahasiswa.
+            Pantau seluruh laporan kehilangan dan penemuan
+            barang yang dikirimkan oleh mahasiswa.
         </p>
 
     </section>
-
 
     <!-- FILTER -->
     <section class="filter-card">
@@ -586,7 +584,6 @@ function e($value)
 
     </section>
 
-
     <!-- DAFTAR LAPORAN -->
     <section>
 
@@ -599,7 +596,6 @@ function e($value)
             </span>
 
         </div>
-
 
         <?php if (count($laporan) > 0): ?>
 
@@ -664,12 +660,10 @@ function e($value)
 
                                 </td>
 
-
                                 <!-- PELAPOR -->
                                 <td>
                                     <?= e($item['nama_pelapor']) ?>
                                 </td>
-
 
                                 <!-- JENIS -->
                                 <td>
@@ -680,18 +674,15 @@ function e($value)
 
                                 </td>
 
-
                                 <!-- KATEGORI -->
                                 <td>
                                     <?= e($item['nama_kategori']) ?>
                                 </td>
 
-
                                 <!-- LOKASI -->
                                 <td>
                                     <?= e($item['nama_lokasi']) ?>
                                 </td>
-
 
                                 <!-- TANGGAL -->
                                 <td>
@@ -701,7 +692,6 @@ function e($value)
                                     ) ?>
                                 </td>
 
-
                                 <!-- STATUS -->
                                 <td>
 
@@ -710,7 +700,6 @@ function e($value)
                                     </span>
 
                                 </td>
-
 
                                 <!-- DETAIL -->
                                 <td>

@@ -50,12 +50,6 @@ $jumlah_laporan = $pdo->query("
     FROM reports
 ")->fetchColumn();
 
-$laporan_pending = $pdo->query("
-    SELECT COUNT(*)
-    FROM reports
-    WHERE status = 'menunggu_verifikasi'
-")->fetchColumn();
-
 $laporan_aktif = $pdo->query("
     SELECT COUNT(*)
     FROM reports
@@ -86,7 +80,7 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard Admin - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -182,11 +176,6 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
             background: #f0edff;
             color: #6246d9;
             font-size: 18px;
-        }
-
-        .warning .icon {
-            background: #fff4dc;
-            color: #e59b20;
         }
 
         .success .icon {
@@ -363,16 +352,6 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
             <strong><?= (int)$jumlah_laporan ?></strong>
         </div>
 
-        <div class="card warning">
-            <div class="card-top">
-                <p>Menunggu Verifikasi</p>
-                <div class="icon">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                </div>
-            </div>
-            <strong><?= (int)$laporan_pending ?></strong>
-        </div>
-
         <div class="card success">
             <div class="card-top">
                 <p>Laporan Aktif</p>
@@ -425,16 +404,15 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
         </a>
 
 
-        <!-- LAPORAN MASUK -->
+        <!-- PEMANTAUAN LAPORAN -->
 
         <a href="laporan-masuk.php">
             <i class="fa-solid fa-inbox"></i>
 
-            <strong>Laporan Masuk</strong>
+            <strong>Pemantauan Laporan</strong>
 
             <small>
-                Periksa laporan kehilangan dan penemuan dari mahasiswa.
-                <?= (int)$laporan_pending ?> laporan menunggu verifikasi.
+                Pantau seluruh laporan kehilangan dan penemuan yang dikirimkan mahasiswa.
             </small>
         </a>
 
