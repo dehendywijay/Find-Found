@@ -104,13 +104,22 @@ function tanggalIndonesia($tanggal)
         date('Y', $waktu);
 }
 
+// Jenis laporan
 $isKehilangan = $barang['jenis_laporan'] === 'kehilangan';
+$isPenemuan = $barang['jenis_laporan'] === 'penemuan';
 
-// Tombol klaim hanya untuk laporan kehilangan
-// dan tidak ditampilkan kepada pemilik laporan
-$bolehKlaim = (
-    $isKehilangan &&
-    (int)$barang['user_id'] !== (int)$_SESSION['user_id']
+// Cek apakah mahasiswa merupakan pemilik laporan
+$isPemilik = (
+    (int)$barang['user_id'] === (int)$_SESSION['user_id']
+);
+
+// Tombol hanya untuk mahasiswa yang bukan pemilik laporan
+$bolehKlaimPenemuan = (
+    $isKehilangan && !$isPemilik
+);
+
+$bolehKlaimBarang = (
+    $isPenemuan && !$isPemilik
 );
 
 ?>
@@ -537,8 +546,8 @@ $bolehKlaim = (
                     Kode laporan: <?= e($barang['kode_laporan']) ?>
                 </div>
 
-                <!-- TOMBOL KLAIM PENEMUAN -->
-                <?php if ($bolehKlaim): ?>
+                <!-- KLAIM PENEMUAN BARANG HILANG -->
+                <?php if ($bolehKlaimPenemuan): ?>
 
                     <div class="claim-box">
 
@@ -554,6 +563,31 @@ $bolehKlaim = (
                         >
                             <i class="fa-solid fa-hand-holding-heart"></i>
                             Saya Menemukan Barang Ini
+                        </a>
+
+                    </div>
+
+                <?php endif; ?>
+
+
+                <!-- KLAIM KEPEMILIKAN BARANG DITEMUKAN -->
+                <?php if ($bolehKlaimBarang): ?>
+
+                    <div class="claim-box">
+
+                        <p>
+                            Apakah barang ini milikmu?
+                            Ajukan klaim dengan mengisi informasi
+                            dan melampirkan bukti kepemilikan untuk
+                            diperiksa oleh admin.
+                        </p>
+
+                        <a
+                            href="ajukan-klaim.php?id=<?= (int)$barang['id'] ?>"
+                            class="btn-claim"
+                        >
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            Klaim Barang
                         </a>
 
                     </div>
