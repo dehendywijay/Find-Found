@@ -221,7 +221,10 @@ function tanggalIndonesia($tanggal)
                 </div>
 
                 <div class="hero-right">
-                    <!-- Area gambar utama sesuai frame Figma -->
+                    <img
+                        src="../assets/images/hero-lost-found.png"
+                        alt="Ilustrasi mahasiswa mencari dan menemukan barang"
+                        class="hero-illustration">
                 </div>
 
             </section>
