@@ -369,9 +369,10 @@ function tanggalIndonesia($tanggal) {
             box-shadow: 0 8px 22px rgba(15, 23, 42, .07);
         }
 
-        /* FOTO OTOMATIS MENGIKUTI RASIO ASLI */
+       /* FOTO BARANG - UKURAN SERAGAM */
         .barang-photo {
             width: 100%;
+            aspect-ratio: 4 / 3;
             background: #f1f5f9;
             display: flex;
             justify-content: center;
@@ -382,14 +383,13 @@ function tanggalIndonesia($tanggal) {
         .barang-photo img {
             display: block;
             width: 100%;
-            height: auto;
-            max-width: 100%;
+            height: 100%;
             object-fit: contain;
         }
 
         .photo-placeholder {
             width: 100%;
-            min-height: 190px;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
