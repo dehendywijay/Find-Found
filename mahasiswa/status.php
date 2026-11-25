@@ -21,6 +21,7 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,6 +48,8 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
             text-decoration: none;
             color: inherit;
         }
+
+        /* NAVBAR */
 
         .navbar {
             min-height: 70px;
@@ -106,13 +109,21 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
             font-size: 17px;
         }
 
+        /* MAIN CONTENT */
+
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 55px 25px 70px;
         }
 
+        /* PAGE HEADING */
+
         .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
             margin-bottom: 35px;
         }
 
@@ -128,6 +139,32 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
             font-size: 14px;
             line-height: 1.6;
         }
+
+        /* BACK BUTTON */
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 11px 17px;
+            border: 1px solid #dbe3ef;
+            border-radius: 9px;
+            background: #fff;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: .2s ease;
+        }
+
+        .back-button:hover {
+            border-color: #a5a0f5;
+            color: #4f46e5;
+            background: #f8faff;
+        }
+
+        /* STATUS GRID */
 
         .status-grid {
             display: grid;
@@ -206,19 +243,7 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
             transform: translateX(5px);
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            margin-top: 32px;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .back-link:hover {
-            color: #4f46e5;
-        }
+        /* RESPONSIVE */
 
         @media (max-width: 700px) {
             .navbar {
@@ -237,8 +262,17 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
                 padding: 35px 20px 50px;
             }
 
+            .page-heading {
+                flex-direction: column;
+                gap: 18px;
+            }
+
             .page-heading h1 {
                 font-size: 25px;
+            }
+
+            .back-button {
+                align-self: flex-start;
             }
 
             .status-grid {
@@ -286,17 +320,32 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
 
 <main class="main-content">
 
+    <!-- PAGE HEADING -->
+
     <div class="page-heading">
-        <h1>Status Aktivitas Saya</h1>
-        <p>
-            Pantau perkembangan laporan dan klaim barang yang kamu ajukan
-            melalui FIND & FOUND.
-        </p>
+
+        <div>
+            <h1>Status Aktivitas Saya</h1>
+
+            <p>
+                Pantau perkembangan laporan dan klaim barang yang kamu ajukan
+                melalui FIND & FOUND.
+            </p>
+        </div>
+
+        <a href="dashboard.php" class="back-button">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali ke Beranda
+        </a>
+
     </div>
+
+    <!-- STATUS GRID -->
 
     <div class="status-grid">
 
         <!-- STATUS LAPORAN -->
+
         <a href="status-laporan.php" class="status-card">
 
             <div class="card-top">
@@ -323,6 +372,7 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
         </a>
 
         <!-- STATUS KLAIM PENEMUAN -->
+
         <a href="status-klaim-penemuan.php" class="status-card">
 
             <div class="card-top">
@@ -349,6 +399,7 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
         </a>
 
         <!-- STATUS KLAIM BARANG -->
+
         <a href="status-klaim-barang.php" class="status-card">
 
             <div class="card-top">
@@ -375,11 +426,6 @@ $nama_mahasiswa = $_SESSION['nama'] ?? 'Mahasiswa';
         </a>
 
     </div>
-
-    <a href="dashboard.php" class="back-link">
-        <i class="fa-solid fa-arrow-left"></i>
-        Kembali ke beranda
-    </a>
 
 </main>
 

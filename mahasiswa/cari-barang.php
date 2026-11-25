@@ -167,6 +167,7 @@ function tanggalIndonesia($tanggal) {
 
     <title>Cari Barang - FIND & FOUND</title>
     <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -189,8 +190,16 @@ function tanggalIndonesia($tanggal) {
         }
 
         /* HEADER */
-        .page-header {
+        .page-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
             margin-bottom: 25px;
+        }
+
+        .page-header {
+            margin-bottom: 0;
         }
 
         .page-header h1 {
@@ -205,18 +214,28 @@ function tanggalIndonesia($tanggal) {
             line-height: 1.6;
         }
 
+        /* TOMBOL KEMBALI */
         .back-link {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            color: #64748b;
+            justify-content: center;
+            gap: 9px;
+            flex-shrink: 0;
+            padding: 11px 16px;
+            color: #475569;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
             text-decoration: none;
-            font-size: 14px;
-            margin-bottom: 22px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
         }
 
         .back-link:hover {
             color: #6246d9;
+            border-color: #c4b5fd;
+            background: #f5f3ff;
         }
 
         /* FILTER */
@@ -369,7 +388,7 @@ function tanggalIndonesia($tanggal) {
             box-shadow: 0 8px 22px rgba(15, 23, 42, .07);
         }
 
-       /* FOTO BARANG - UKURAN SERAGAM */
+        /* FOTO BARANG - UKURAN SERAGAM */
         .barang-photo {
             width: 100%;
             aspect-ratio: 4 / 3;
@@ -517,6 +536,7 @@ function tanggalIndonesia($tanggal) {
             line-height: 1.6;
         }
 
+        /* RESPONSIVE */
         @media (max-width: 900px) {
             .barang-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -528,8 +548,18 @@ function tanggalIndonesia($tanggal) {
                 padding: 22px 16px 40px;
             }
 
+            .page-header-top {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
             .page-header h1 {
                 font-size: 23px;
+            }
+
+            .back-link {
+                align-self: flex-start;
             }
 
             .filter-grid {
@@ -559,19 +589,22 @@ function tanggalIndonesia($tanggal) {
 
 <div class="page-container">
 
-    <!-- KEMBALI -->
-    <a href="dashboard.php" class="back-link">
-        <i class="fa-solid fa-arrow-left"></i>
-        Kembali ke Beranda
-    </a>
+    <!-- HEADER JUDUL DAN TOMBOL KEMBALI -->
+    <div class="page-header-top">
 
-    <!-- JUDUL -->
-    <div class="page-header">
-        <h1>Cari Barang</h1>
-        <p>
-            Temukan barang hilang atau barang yang telah ditemukan
-            di lingkungan kampus.
-        </p>
+        <div class="page-header">
+            <h1>Cari Barang</h1>
+            <p>
+                Temukan barang hilang atau barang yang telah ditemukan
+                di lingkungan kampus.
+            </p>
+        </div>
+
+        <a href="dashboard.php" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali ke Beranda
+        </a>
+
     </div>
 
     <!-- FORM PENCARIAN -->
@@ -662,7 +695,6 @@ function tanggalIndonesia($tanggal) {
 
     </form>
 
-
     <!-- HASIL PENCARIAN -->
     <div class="result-header">
 
@@ -673,7 +705,6 @@ function tanggalIndonesia($tanggal) {
         </span>
 
     </div>
-
 
     <div class="barang-grid">
 
@@ -712,7 +743,6 @@ function tanggalIndonesia($tanggal) {
 
                     </div>
 
-
                     <!-- INFORMASI BARANG -->
                     <div class="barang-content">
 
@@ -749,7 +779,6 @@ function tanggalIndonesia($tanggal) {
                         </p>
 
                     </div>
-
 
                     <!-- FOOTER KARTU -->
                     <div class="card-footer">

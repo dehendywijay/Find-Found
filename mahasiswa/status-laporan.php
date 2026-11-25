@@ -242,6 +242,44 @@ function warnaStatus($status, $statusKlaim = null)
             background: #fee2e2;
             color: #991b1b;
         }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: .2s;
+        }
+
+        .back-button:hover {
+            color: #6246d9;
+            border-color: #c4b5fd;
+            background: #f8f7ff;
+        }
+
+        @media (max-width: 600px) {
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 
@@ -270,11 +308,20 @@ function warnaStatus($status, $statusKlaim = null)
 <main class="container">
 
     <section class="page-heading">
-        <h1>Status laporan</h1>
 
-        <p>
-            Pantau perkembangan laporan kehilangan dan penemuan barangmu.
-        </p>
+        <div>
+            <h1>Status laporan</h1>
+
+            <p>
+                Pantau perkembangan laporan kehilangan dan penemuan barangmu.
+            </p>
+        </div>
+
+        <a href="status.php" class="back-button">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali ke Status Aktivitas
+        </a>
+
     </section>
 
     <?php if ($flash): ?>
