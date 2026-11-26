@@ -27,18 +27,18 @@ $jumlah_mahasiswa = $pdo->query("
     WHERE role = 'mahasiswa'
 ")->fetchColumn();
 
-$jumlah_pending = $pdo->query("
-    SELECT COUNT(*)
-    FROM users
-    WHERE role = 'mahasiswa'
-    AND status_akun = 'pending'
-")->fetchColumn();
-
 $jumlah_aktif = $pdo->query("
     SELECT COUNT(*)
     FROM users
     WHERE role = 'mahasiswa'
     AND status_akun = 'aktif'
+")->fetchColumn();
+
+$jumlah_nonaktif = $pdo->query("
+    SELECT COUNT(*)
+    FROM users
+    WHERE role = 'mahasiswa'
+    AND status_akun = 'nonaktif'
 ")->fetchColumn();
 
 // ==========================================
@@ -48,12 +48,6 @@ $jumlah_aktif = $pdo->query("
 $jumlah_laporan = $pdo->query("
     SELECT COUNT(*)
     FROM reports
-")->fetchColumn();
-
-$laporan_pending = $pdo->query("
-    SELECT COUNT(*)
-    FROM reports
-    WHERE status = 'menunggu_verifikasi'
 ")->fetchColumn();
 
 $laporan_aktif = $pdo->query("
@@ -86,7 +80,7 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard Admin - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -182,11 +176,6 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
             background: #f0edff;
             color: #6246d9;
             font-size: 18px;
-        }
-
-        .warning .icon {
-            background: #fff4dc;
-            color: #e59b20;
         }
 
         .success .icon {
@@ -324,16 +313,6 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
             <strong><?= (int)$jumlah_mahasiswa ?></strong>
         </div>
 
-        <div class="card warning">
-            <div class="card-top">
-                <p>Menunggu Aktivasi</p>
-                <div class="icon">
-                    <i class="fa-solid fa-user-clock"></i>
-                </div>
-            </div>
-            <strong><?= (int)$jumlah_pending ?></strong>
-        </div>
-
         <div class="card success">
             <div class="card-top">
                 <p>Akun Aktif</p>
@@ -342,6 +321,16 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
                 </div>
             </div>
             <strong><?= (int)$jumlah_aktif ?></strong>
+        </div>
+
+        <div class="card danger">
+            <div class="card-top">
+                <p>Akun Nonaktif</p>
+                <div class="icon">
+                    <i class="fa-solid fa-user-slash"></i>
+                </div>
+            </div>
+            <strong><?= (int)$jumlah_nonaktif ?></strong>
         </div>
 
     </div>
@@ -361,16 +350,6 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
                 </div>
             </div>
             <strong><?= (int)$jumlah_laporan ?></strong>
-        </div>
-
-        <div class="card warning">
-            <div class="card-top">
-                <p>Menunggu Verifikasi</p>
-                <div class="icon">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                </div>
-            </div>
-            <strong><?= (int)$laporan_pending ?></strong>
         </div>
 
         <div class="card success">
@@ -412,29 +391,28 @@ $nama_admin = $_SESSION['nama'] ?? 'Administrator';
 
     <div class="menu">
 
-        <!-- AKTIVASI AKUN -->
+        <!-- KELOLA AKUN MAHASISWA -->
 
         <a href="aktivasi-akun.php">
-            <i class="fa-solid fa-user-check"></i>
+            <i class="fa-solid fa-users-gear"></i>
 
-            <strong>Aktivasi Akun</strong>
+            <strong>Kelola Akun Mahasiswa</strong>
 
             <small>
-                Kelola pendaftaran dan aktivasi akun mahasiswa.
+                Lihat daftar akun mahasiswa serta ubah status akun jika diperlukan.
             </small>
         </a>
 
 
-        <!-- LAPORAN MASUK -->
+        <!-- PEMANTAUAN LAPORAN -->
 
         <a href="laporan-masuk.php">
             <i class="fa-solid fa-inbox"></i>
 
-            <strong>Laporan Masuk</strong>
+            <strong>Pemantauan Laporan</strong>
 
             <small>
-                Periksa laporan kehilangan dan penemuan dari mahasiswa.
-                <?= (int)$laporan_pending ?> laporan menunggu verifikasi.
+                Pantau seluruh laporan kehilangan dan penemuan yang dikirimkan mahasiswa.
             </small>
         </a>
 

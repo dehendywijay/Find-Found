@@ -59,9 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$user || !password_verify($password, $user['password'])) {
                 $error = 'Email atau kata sandi salah.';
 
-            } elseif ($user['status_akun'] === 'pending') {
-                $error = 'Akun kamu belum diaktifkan oleh admin.';
-
+            // Memeriksa status akun
             } elseif ($user['status_akun'] !== 'aktif') {
                 $error = 'Akun kamu sedang tidak aktif. Hubungi admin.';
 
@@ -74,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
 
-                // Membuat token login baru
+                // Menghapus token login lama
                 unset($_SESSION['csrf_login']);
 
                 // Mengarahkan pengguna berdasarkan role
@@ -108,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masuk - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="../assets/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 

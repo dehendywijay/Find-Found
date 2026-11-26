@@ -134,7 +134,7 @@ function warnaStatusKlaim($status)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Status Klaim Penemuan - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="../assets/css/status-laporan.css">
 
     <link rel="stylesheet"
@@ -182,10 +182,47 @@ function warnaStatusKlaim($status)
             font-size: 12px;
         }
 
+        /* Tombol kembali */
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: .2s;
+        }
+
+        .back-button:hover {
+            color: #6246d9;
+            border-color: #c4b5fd;
+            background: #f8f7ff;
+        }
+
         @media (max-width: 600px) {
             .claim-meta {
                 flex-direction: column;
                 gap: 7px;
+            }
+
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
     </style>
@@ -219,12 +256,19 @@ function warnaStatusKlaim($status)
 
     <section class="page-heading">
 
-        <h1>Status Klaim Penemuan</h1>
+        <div>
+            <h1>Status Klaim Penemuan</h1>
 
-        <p>
-            Pantau perkembangan pengajuan ketika kamu menemukan
-            barang milik mahasiswa lain.
-        </p>
+            <p>
+                Pantau perkembangan pengajuan ketika kamu menemukan
+                barang milik mahasiswa lain.
+            </p>
+        </div>
+
+        <a href="status.php" class="back-button">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali ke Status Aktivitas
+        </a>
 
     </section>
 
@@ -431,11 +475,6 @@ function warnaStatusKlaim($status)
         <?php endif; ?>
 
     </section>
-
-    <a href="status.php" class="back-link">
-        <i class="fa-solid fa-arrow-left"></i>
-        Kembali ke status aktivitas
-    </a>
 
 </main>
 

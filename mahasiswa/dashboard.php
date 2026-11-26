@@ -102,7 +102,7 @@ function tanggalIndonesia($tanggal)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Beranda - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="../assets/css/mahasiswa-dashboard.css">
 
     <link rel="stylesheet"
@@ -221,7 +221,10 @@ function tanggalIndonesia($tanggal)
                 </div>
 
                 <div class="hero-right">
-                    <!-- Area gambar utama sesuai frame Figma -->
+                    <img
+                        src="../assets/images/hero-lost-found.png"
+                        alt="Ilustrasi mahasiswa mencari dan menemukan barang"
+                        class="hero-illustration">
                 </div>
 
             </section>

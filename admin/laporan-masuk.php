@@ -15,11 +15,21 @@ if (
     exit;
 }
 
+// Token CSRF untuk aksi penghapusan laporan
+if (empty($_SESSION['csrf_hapus_laporan'])) {
+    $_SESSION['csrf_hapus_laporan'] = bin2hex(random_bytes(32));
+}
+$csrfTokenHapus = $_SESSION['csrf_hapus_laporan'];
+
+// Pesan hasil aksi penghapusan
+$flashHapus = $_SESSION['flash_hapus_laporan'] ?? null;
+unset($_SESSION['flash_hapus_laporan']);
+
 // ==========================================
 // 2. AMBIL FILTER PENCARIAN
 // ==========================================
 $keyword = trim($_GET['keyword'] ?? '');
-$filterStatus = $_GET['status'] ?? 'menunggu_verifikasi';
+$filterStatus = $_GET['status'] ?? '';
 $filterJenis = $_GET['jenis'] ?? '';
 
 // Status yang diperbolehkan
@@ -49,6 +59,29 @@ $sql = "
         r.tanggal_kejadian,
         r.status,
         r.created_at,
+
+        NOT EXISTS (
+            SELECT 1
+            FROM claims c_hapus
+            WHERE c_hapus.report_id = r.id
+              AND c_hapus.status NOT IN ('ditolak', 'dibatalkan')
+        ) AS klaim_barang_aman_dihapus,
+
+        NOT EXISTS (
+            SELECT 1
+            FROM finding_claims fc_hapus
+            WHERE fc_hapus.report_id = r.id
+              AND fc_hapus.status <> 'ditolak'
+        ) AS klaim_penemuan_aman_dihapus,
+
+        NOT EXISTS (
+            SELECT 1
+            FROM claims c_handover
+            INNER JOIN handovers h
+                ON h.claim_id = c_handover.id
+            WHERE c_handover.report_id = r.id
+              AND h.status <> 'dibatalkan'
+        ) AS handover_aman_dihapus,
 
         u.nama AS nama_pelapor,
 
@@ -124,6 +157,8 @@ $stmt->execute($params);
 
 $laporan = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+
 // ==========================================
 // 7. FUNGSI LABEL STATUS
 // ==========================================
@@ -172,8 +207,8 @@ function e($value)
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Laporan Masuk - FIND & FOUND</title>
-
+    <title>Pemantauan Laporan - FIND & FOUND</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -425,6 +460,61 @@ function e($value)
             background: #5035c0;
         }
 
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .delete-form {
+            display: inline-block;
+            margin: 0;
+        }
+
+        .delete-button {
+            display: inline-block;
+            padding: 9px 13px;
+            border-radius: 7px;
+            background: #ffe2e2;
+            color: #c53030;
+            border: none;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .delete-button:hover {
+            background: #ffd0d0;
+        }
+
+        .action-unavailable {
+            display: inline-block;
+            color: #999;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .flash-message {
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .flash-success {
+            background: #dcf7e8;
+            color: #16834b;
+            border: 1px solid #b9ebce;
+        }
+
+        .flash-error {
+            background: #ffe2e2;
+            color: #b83232;
+            border: 1px solid #ffcaca;
+        }
+
         .empty-state {
             background: white;
             border: 1px solid #e8e7ed;
@@ -503,19 +593,23 @@ function e($value)
 
     </div>
 
-
     <!-- HEADING -->
     <section class="heading">
 
-        <h1>Laporan Masuk</h1>
+        <h1>Pemantauan Laporan</h1>
 
         <p>
-            Kelola dan verifikasi laporan kehilangan maupun
-            penemuan barang dari mahasiswa.
+            Pantau seluruh laporan kehilangan dan penemuan
+            barang yang dikirimkan oleh mahasiswa.
         </p>
 
     </section>
 
+    <?php if ($flashHapus): ?>
+        <div class="flash-message <?= ($flashHapus['type'] ?? '') === 'success' ? 'flash-success' : 'flash-error' ?>">
+            <?= e($flashHapus['message'] ?? '') ?>
+        </div>
+    <?php endif; ?>
 
     <!-- FILTER -->
     <section class="filter-card">
@@ -586,7 +680,6 @@ function e($value)
 
     </section>
 
-
     <!-- DAFTAR LAPORAN -->
     <section>
 
@@ -599,7 +692,6 @@ function e($value)
             </span>
 
         </div>
-
 
         <?php if (count($laporan) > 0): ?>
 
@@ -664,12 +756,10 @@ function e($value)
 
                                 </td>
 
-
                                 <!-- PELAPOR -->
                                 <td>
                                     <?= e($item['nama_pelapor']) ?>
                                 </td>
-
 
                                 <!-- JENIS -->
                                 <td>
@@ -680,18 +770,15 @@ function e($value)
 
                                 </td>
 
-
                                 <!-- KATEGORI -->
                                 <td>
                                     <?= e($item['nama_kategori']) ?>
                                 </td>
 
-
                                 <!-- LOKASI -->
                                 <td>
                                     <?= e($item['nama_lokasi']) ?>
                                 </td>
-
 
                                 <!-- TANGGAL -->
                                 <td>
@@ -700,7 +787,6 @@ function e($value)
                                         strtotime($item['tanggal_kejadian'])
                                     ) ?>
                                 </td>
-
 
                                 <!-- STATUS -->
                                 <td>
@@ -711,17 +797,51 @@ function e($value)
 
                                 </td>
 
-
-                                <!-- DETAIL -->
+                                <!-- AKSI -->
                                 <td>
 
-                                    <a
-                                        href="detail-laporan.php?id=<?= (int)$item['id'] ?>"
-                                        class="detail-button"
-                                    >
-                                        <i class="fa-solid fa-eye"></i>
-                                        Detail
-                                    </a>
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="detail-laporan.php?id=<?= (int)$item['id'] ?>"
+                                            class="detail-button"
+                                        >
+                                            <i class="fa-solid fa-eye"></i>
+                                            Detail
+                                        </a>
+
+                                        <?php
+                                        $bolehHapus =
+                                            $item['status'] !== 'selesai' &&
+                                            (int)$item['klaim_barang_aman_dihapus'] === 1 &&
+                                            (int)$item['klaim_penemuan_aman_dihapus'] === 1 &&
+                                            (int)$item['handover_aman_dihapus'] === 1;
+                                        ?>
+
+                                        <?php if ($bolehHapus): ?>
+                                            <form
+                                                action="proses-hapus-laporan.php"
+                                                method="POST"
+                                                class="delete-form"
+                                                onsubmit="return confirm('Yakin ingin menghapus laporan <?= e($item['kode_laporan']) ?>? Data klaim dan foto terkait yang sudah tidak aktif juga akan dihapus. Tindakan ini tidak dapat dibatalkan.');"
+                                            >
+                                                <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= e($csrfTokenHapus) ?>">
+                                                <input type="hidden" name="keyword" value="<?= e($keyword) ?>">
+                                                <input type="hidden" name="status" value="<?= e($filterStatus) ?>">
+                                                <input type="hidden" name="jenis" value="<?= e($filterJenis) ?>">
+                                                <button type="submit" class="delete-button">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        <?php else: ?>
+                                            <span class="action-unavailable">
+                                                <?= $item['status'] === 'selesai' ? 'Laporan selesai' : 'Klaim/serah terima terkait' ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                    </div>
 
                                 </td>
 

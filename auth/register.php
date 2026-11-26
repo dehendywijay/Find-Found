@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         :email,
                         :password,
                         'mahasiswa',
-                        'pending'
+                        'aktif'
                     )
                 ");
 
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar - FIND & FOUND</title>
-
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
     <link rel="stylesheet" href="../assets/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -221,13 +221,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="register-alert register-success">
                     <i class="fa-solid fa-circle-check"></i>
-                    Akun berhasil dibuat.
+                    Akun berhasil dibuat dan sudah aktif.
                 </div>
 
                 <p>
-                    Akun kamu saat ini sedang menunggu aktivasi
-                    admin. Kamu belum bisa masuk sebelum akun
-                    diaktifkan.
+                    Pendaftaran akun kamu berhasil.
+                    Sekarang kamu sudah bisa masuk menggunakan
+                    email kampus dan kata sandi yang telah didaftarkan.
                 </p>
 
                 <a href="login.php" style="
@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     font-size:12px;
                     font-weight:600;
                 ">
-                    Kembali ke halaman masuk
+                    Masuk ke akun
                 </a>
 
             <?php else: ?>

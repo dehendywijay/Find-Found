@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -82,6 +81,9 @@ foreach ($mahasiswa as $akun) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aktivasi Akun Mahasiswa</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -117,6 +119,13 @@ foreach ($mahasiswa as $akun) {
         .subtitle {
             color: #777;
             margin: 0;
+        }
+
+        .back-link {
+            color: #6246d9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .summary {
@@ -229,6 +238,10 @@ foreach ($mahasiswa as $akun) {
             h1 {
                 font-size: 22px;
             }
+
+            .header {
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -243,6 +256,11 @@ foreach ($mahasiswa as $akun) {
                 Kelola pendaftaran akun mahasiswa FIND & FOUND.
             </p>
         </div>
+
+        <a href="dashboard.php" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            Kembali ke Dashboard
+        </a>
     </div>
 
     <?php if ($pesan): ?>
