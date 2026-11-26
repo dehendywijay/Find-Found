@@ -282,7 +282,7 @@ function e($value) {
 
                         <strong>Unggah foto barang</strong>
 
-                        <span>JPG atau PNG, maksimal 5 MB, maksimal 3 file</span>
+                        <span>JPG atau PNG, maksimal 5 MB</span>
 
                     </label>
 
@@ -368,7 +368,7 @@ function e($value) {
                         id="kontak"
                         name="kontak"
                         maxlength="30"
-                        placeholder="Email atau nomor WhatsApp"
+                        placeholder="Nomor WhatsApp"
                     >
 
                 </div>

@@ -366,7 +366,7 @@ try {
     $_SESSION['klaim_berhasil_id'] = $findingClaimId;
 
     // Arahkan mahasiswa ke halaman status
-    header('Location: status-laporan.php');
+    header('Location: status-klaim-penemuan.php');
     exit;
 
 } catch (Throwable $e) {

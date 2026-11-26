@@ -320,7 +320,7 @@ try {
 
     $_SESSION['klaim_barang_berhasil_id'] = $claimId;
 
-    header('Location: detail-barang.php?id=' . $reportId);
+    header('Location: status-klaim-barang.php');
     exit;
 
 } catch (Throwable $e) {
